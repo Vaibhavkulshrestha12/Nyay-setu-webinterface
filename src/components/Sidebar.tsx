@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Search, Book, ChevronDown, ChevronRight } from 'lucide-react';
 import { Translation } from '../types';
 import { ipcData, transformIPCData } from '../data/ipcSections';
@@ -27,20 +27,61 @@ export const Sidebar: React.FC<SidebarProps> = ({ t, isOpen }) => {
     );
   };
 
- 
+  
+  const searchSections = useCallback((sections: typeof IPC_SECTIONS, term: string) => {
+    if (!term) return sections;
+
+    const searchTerms = term.toLowerCase().split(' ').filter(Boolean);
+    
+    return sections.map(chapter => {
+      const matchedSections = chapter.sections.filter(section => {
+        const sectionText = `${section.number} ${section.description}`.toLowerCase();
+        
+        
+        return searchTerms.every(term => 
+          sectionText.includes(term) ||
+          
+          (term.match(/^\d+$/) && section.number.includes(term))
+        );
+      });
+
+      return {
+        ...chapter,
+        sections: matchedSections
+      };
+    }).filter(chapter => chapter.sections.length > 0);
+  }, []);
+
+  
   const filteredSections = useMemo(() => {
     const sections = activeTab === 'ipc' ? IPC_SECTIONS : CPC_SECTIONS;
-    if (!searchTerm) return sections;
+    return searchSections(sections, searchTerm);
+  }, [activeTab, searchTerm, IPC_SECTIONS, CPC_SECTIONS, searchSections]);
 
-    const searchLower = searchTerm.toLowerCase();
-    return sections.map(chapter => ({
-      ...chapter,
-      sections: chapter.sections.filter(section =>
-        section.description.toLowerCase().includes(searchLower) ||
-        section.number.includes(searchLower)
-      )
-    })).filter(chapter => chapter.sections.length > 0);
-  }, [activeTab, searchTerm, IPC_SECTIONS, CPC_SECTIONS]);
+  
+  useEffect(() => {
+    if (searchTerm) {
+      const matchedChapterTitles = filteredSections.map(chapter => chapter.title);
+      setExpandedSections(matchedChapterTitles);
+    } else {
+      setExpandedSections([]);
+    }
+  }, [searchTerm, filteredSections]);
+
+  
+  const highlightText = (text: string, searchTerm: string) => {
+    if (!searchTerm) return text;
+
+    const searchTerms = searchTerm.toLowerCase().split(' ').filter(Boolean);
+    let highlightedText = text;
+
+    searchTerms.forEach(term => {
+      const regex = new RegExp(`(${term})`, 'gi');
+      highlightedText = highlightedText.replace(regex, '<mark class="bg-yellow-200 dark:bg-yellow-900 rounded px-1">$1</mark>');
+    });
+
+    return <span dangerouslySetInnerHTML={{ __html: highlightedText }} />;
+  };
 
   return (
     <div
@@ -62,7 +103,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ t, isOpen }) => {
               className="w-full px-4 py-2 pl-10 bg-gray-100 dark:bg-gray-700/50 border-none rounded-lg text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-gov-green-500"
             />
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              >
+                ×
+              </button>
+            )}
           </div>
+          {searchTerm && (
+            <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              Found {filteredSections.reduce((acc, chapter) => acc + chapter.sections.length, 0)} results
+            </div>
+          )}
         </div>
 
         <div className="flex border-b border-gray-200 dark:border-gray-700/50">
@@ -89,45 +143,51 @@ export const Sidebar: React.FC<SidebarProps> = ({ t, isOpen }) => {
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {filteredSections.map((section) => (
-            <div key={section.title} className="border-b border-gray-200 dark:border-gray-700/50">
-              <button
-                onClick={() => toggleSection(section.title)}
-                className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-700/50"
-              >
-                <span className="text-sm font-medium text-gray-800 dark:text-white">
-                  {section.title}
-                </span>
-                {expandedSections.includes(section.title) ? (
-                  <ChevronDown className="h-5 w-5 text-gray-400" />
-                ) : (
-                  <ChevronRight className="h-5 w-5 text-gray-400" />
-                )}
-              </button>
-              {expandedSections.includes(section.title) && (
-                <div className="bg-gray-50 dark:bg-gray-700/30">
-                  {section.sections.map((s) => (
-                    <div
-                      key={s.number}
-                      className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600/50 cursor-pointer"
-                    >
-                      <div className="flex items-start space-x-2">
-                        <Book className="h-4 w-4 mt-1 text-gov-green-600 dark:text-gov-green-300" />
-                        <div>
-                          <span className="text-sm font-medium text-gray-800 dark:text-white">
-                            Section {s.number}
-                          </span>
-                          <p className="text-sm text-gray-600 dark:text-gray-300">
-                            {s.description}
-                          </p>
+          {filteredSections.length > 0 ? (
+            filteredSections.map((section) => (
+              <div key={section.title} className="border-b border-gray-200 dark:border-gray-700/50">
+                <button
+                  onClick={() => toggleSection(section.title)}
+                  className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                >
+                  <span className="text-sm font-medium text-gray-800 dark:text-white">
+                    {highlightText(section.title, searchTerm)}
+                  </span>
+                  {expandedSections.includes(section.title) ? (
+                    <ChevronDown className="h-5 w-5 text-gray-400" />
+                  ) : (
+                    <ChevronRight className="h-5 w-5 text-gray-400" />
+                  )}
+                </button>
+                {expandedSections.includes(section.title) && (
+                  <div className="bg-gray-50 dark:bg-gray-700/30">
+                    {section.sections.map((s) => (
+                      <div
+                        key={s.number}
+                        className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600/50 cursor-pointer"
+                      >
+                        <div className="flex items-start space-x-2">
+                          <Book className="h-4 w-4 mt-1 text-gov-green-600 dark:text-gov-green-300" />
+                          <div>
+                            <span className="text-sm font-medium text-gray-800 dark:text-white">
+                              Section {highlightText(s.number.toString(), searchTerm)}
+                            </span>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">
+                              {highlightText(s.description, searchTerm)}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+              No results found for "{searchTerm}"
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>
