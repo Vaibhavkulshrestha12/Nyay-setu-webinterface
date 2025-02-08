@@ -19,7 +19,7 @@ export const translations: Record<string, Translation> = {
     firNotFound: 'Unable to find FIR with the provided ID'
   },
   hi: {
-    title: 'एफआईआर प्राप्ति प्रणाली',
+    title: 'न्यायसेतु',
     placeholder: 'एफआईआर आईडी दर्ज करें',
     fetch: 'एफआईआर प्राप्त करें',
     fetching: 'प्राप्त कर रहे हैं...',
@@ -36,7 +36,7 @@ export const translations: Record<string, Translation> = {
     firNotFound: 'दी गई एफआईआर आईडी से कोई एफआईआर नहीं मिला'
   },
   bn: {
-    title: 'এফআইআর রিট্রিভাল সিস্টেম',
+    title: 'ন্যায়সেতু',
     placeholder: 'এফআইআর আইডি লিখুন',
     fetch: 'এফআইআর খুঁজুন',
     fetching: 'খোঁজা হচ্ছে...',
@@ -53,7 +53,7 @@ export const translations: Record<string, Translation> = {
     firNotFound: 'প্রদত্ত এফআইআর আইডি খুঁজে পাওয়া যায়নি'
   },
   te: {
-    title: 'ఎఫ్ఐఆర్ రిట్రీవల్ సిస్టమ్',
+    title: 'న్యాయసేతు',
     placeholder: 'ఎఫ్ఐఆర్ ఐడి ఎంటర్ చేయండి',
     fetch: 'ఎఫ్ఐఆర్ పొందండి',
     fetching: 'పొందుతున్నాము...',
@@ -70,7 +70,7 @@ export const translations: Record<string, Translation> = {
     firNotFound: 'ఇచ్చిన ఎఫ్ఐఆర్ ఐడితో ఎఫ్ఐఆర్ కనుగొనబడలేదు'
   },
   ta: {
-    title: 'எஃப்ஐஆர் மீட்பு அமைப்பு',
+    title: 'நியாயசேது',
     placeholder: 'எஃப்ஐஆர் ஐடியை உள்ளிடவும்',
     fetch: 'எஃப்ஐஆர் பெறுக',
     fetching: 'பெறுகிறது...',
@@ -87,7 +87,7 @@ export const translations: Record<string, Translation> = {
     firNotFound: 'கொடுக்கப்பட்ட எஃப்ஐஆர் ஐடியுடன் எஃப்ஐஆர் கிடைக்கவில்லை'
   },
   mr: {
-    title: 'एफआयआर प्राप्ती प्रणाली',
+    title: 'न्यायसेतू',
     placeholder: 'एफआयआर आयडी प्रविष्ट करा',
     fetch: 'एफआयआर मिळवा',
     fetching: 'मिळवत आहे...',
@@ -104,7 +104,7 @@ export const translations: Record<string, Translation> = {
     firNotFound: 'दिलेल्या एफआयआर आयडीसह एफआयआर सापडला नाही'
   },
   gu: {
-    title: 'એફઆઈઆર રિટ્રીવલ સિસ્ટમ',
+    title: 'ન્યાયસેતુ',
     placeholder: 'એફઆઈઆર આઈડી દાખલ કરો',
     fetch: 'એફઆઈઆર મેળવો',
     fetching: 'મેળવી રહ્યા છીએ...',
@@ -121,7 +121,7 @@ export const translations: Record<string, Translation> = {
     firNotFound: 'આપેલ એફઆઈઆર આઈડી સાથે એફઆઈઆર મળ્યું નથી'
   },
   pa: {
-    title: 'ਐਫਆਈਆਰ ਰਿਟਰੀਵਲ ਸਿਸਟਮ',
+    title: 'ਨਿਆਂਸੇਤੂ',
     placeholder: 'ਐਫਆਈਆਰ ਆਈਡੀ ਦਰਜ ਕਰੋ',
     fetch: 'ਐਫਆਈਆਰ ਪ੍ਰਾਪਤ ਕਰੋ',
     fetching: 'ਪ੍ਰਾਪਤ ਕਰ ਰਹੇ ਹਾਂ...',

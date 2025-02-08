@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Search, Book, ChevronDown, ChevronRight } from 'lucide-react';
 import { Translation } from '../types';
 import { ipcData, transformIPCData } from '../data/ipcSections';
@@ -15,7 +15,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ t, isOpen }) => {
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<'ipc' | 'cpc'>('ipc');
 
-  
   const IPC_SECTIONS = useMemo(() => transformIPCData(ipcData), []);
   const CPC_SECTIONS = useMemo(() => transformCPCData(cpcData), []);
 
@@ -27,7 +26,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ t, isOpen }) => {
     );
   };
 
-  
   const searchSections = useCallback((sections: typeof IPC_SECTIONS, term: string) => {
     if (!term) return sections;
 
@@ -36,11 +34,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ t, isOpen }) => {
     return sections.map(chapter => {
       const matchedSections = chapter.sections.filter(section => {
         const sectionText = `${section.number} ${section.description}`.toLowerCase();
-        
-        
         return searchTerms.every(term => 
           sectionText.includes(term) ||
-          
           (term.match(/^\d+$/) && section.number.includes(term))
         );
       });
@@ -52,13 +47,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ t, isOpen }) => {
     }).filter(chapter => chapter.sections.length > 0);
   }, []);
 
-  
   const filteredSections = useMemo(() => {
     const sections = activeTab === 'ipc' ? IPC_SECTIONS : CPC_SECTIONS;
     return searchSections(sections, searchTerm);
   }, [activeTab, searchTerm, IPC_SECTIONS, CPC_SECTIONS, searchSections]);
 
-  
   useEffect(() => {
     if (searchTerm) {
       const matchedChapterTitles = filteredSections.map(chapter => chapter.title);
@@ -68,7 +61,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ t, isOpen }) => {
     }
   }, [searchTerm, filteredSections]);
 
-  
   const highlightText = (text: string, searchTerm: string) => {
     if (!searchTerm) return text;
 
@@ -85,13 +77,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ t, isOpen }) => {
 
   return (
     <div
-      className={`fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white dark:bg-gray-800/95 border-r border-gray-200 dark:border-gray-700/50 transition-all duration-300 ${
-        isOpen ? 'w-80' : 'w-0'
+      className={`fixed inset-y-0 left-0 w-80 bg-white dark:bg-black border-r border-gray-200 dark:border-gray-800 transition-all duration-300 z-50 mt-14 sm:mt-16 ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
       } overflow-hidden`}
     >
       <div className="h-full flex flex-col">
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700/50">
-          <h2 className="text-xl font-serif font-semibold text-gray-800 dark:text-white mb-4">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+          <h2 className="text-xl font-serif font-semibold text-gray-900 dark:text-white mb-4">
             {t.legalReference}
           </h2>
           <div className="relative">
@@ -100,7 +92,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ t, isOpen }) => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={t.searchLaws}
-              className="w-full px-4 py-2 pl-10 bg-gray-100 dark:bg-gray-700/50 border-none rounded-lg text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-gov-green-500"
+              className="w-full px-4 py-2 pl-10 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-gov-green-500"
             />
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             {searchTerm && (
@@ -119,7 +111,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ t, isOpen }) => {
           )}
         </div>
 
-        <div className="flex border-b border-gray-200 dark:border-gray-700/50">
+        <div className="flex border-b border-gray-200 dark:border-gray-800">
           <button
             onClick={() => setActiveTab('ipc')}
             className={`flex-1 px-4 py-3 text-sm font-medium ${
@@ -145,12 +137,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ t, isOpen }) => {
         <div className="flex-1 overflow-y-auto">
           {filteredSections.length > 0 ? (
             filteredSections.map((section) => (
-              <div key={section.title} className="border-b border-gray-200 dark:border-gray-700/50">
+              <div key={section.title} className="border-b border-gray-200 dark:border-gray-800">
                 <button
                   onClick={() => toggleSection(section.title)}
-                  className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                  className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-900"
                 >
-                  <span className="text-sm font-medium text-gray-800 dark:text-white">
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">
                     {highlightText(section.title, searchTerm)}
                   </span>
                   {expandedSections.includes(section.title) ? (
@@ -160,16 +152,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ t, isOpen }) => {
                   )}
                 </button>
                 {expandedSections.includes(section.title) && (
-                  <div className="bg-gray-50 dark:bg-gray-700/30">
+                  <div className="bg-gray-50 dark:bg-gray-900">
                     {section.sections.map((s) => (
                       <div
                         key={s.number}
-                        className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600/50 cursor-pointer"
+                        className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
                       >
                         <div className="flex items-start space-x-2">
                           <Book className="h-4 w-4 mt-1 text-gov-green-600 dark:text-gov-green-300" />
                           <div>
-                            <span className="text-sm font-medium text-gray-800 dark:text-white">
+                            <span className="text-sm font-medium text-gray-900 dark:text-white">
                               Section {highlightText(s.number.toString(), searchTerm)}
                             </span>
                             <p className="text-sm text-gray-600 dark:text-gray-300">

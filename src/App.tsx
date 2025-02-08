@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Header } from './components/Header';
-import { FIRForm } from './components/FIRForm';
 import { FIRViewer } from './components/FIRViewer';
 import { Chatbot } from './components/Chatbot';
 import { Sidebar } from './components/Sidebar';
 import { translations } from './translations';
 import { ColorblindMode, Language, FIRData } from './types';
-import { Menu } from 'lucide-react';
+import { Menu, X, BookOpenCheck, Loader2 } from 'lucide-react';
+import badge from  "../src/assets//profile.png";
 
 function App() {
   const [firId, setFirId] = useState('');
@@ -85,7 +85,7 @@ function App() {
 
   return (
     <div 
-      className={`min-h-screen transition-colors duration-200 ${isDark ? 'dark bg-gray-900' : 'bg-gray-50'}`}
+      className={`min-h-screen transition-colors duration-200 ${isDark ? 'dark bg-zinc-950' : 'bg-gray-50'}`}
       style={{ filter: getColorblindFilter() }}
     >
       <Header
@@ -100,7 +100,7 @@ function App() {
         setIsMobileMenuOpen={setIsMobileMenuOpen}
       />
 
-      <div className="flex h-[calc(100vh-4rem)]">
+      <div className="flex flex-col-reverse sm:flex-row h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)]">
         <Sidebar
           t={t}
           isOpen={isSidebarOpen}
@@ -108,25 +108,66 @@ function App() {
         />
 
         <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'md:ml-80' : 'ml-0'} overflow-y-auto`}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="bg-white dark:bg-gray-800/95 rounded-2xl shadow-xl p-8">
-              <div className="max-w-xl mx-auto">
-                <div className="flex flex-col space-y-6">
-                  <FIRForm
-                    firId={firId}
-                    setFirId={setFirId}
-                    loading={loading}
-                    onSubmit={fetchFIR}
-                    t={t}
-                  />
-
-                  {error && (
-                    <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-200 p-4 rounded-xl text-sm animate-fade-in">
-                      {error}
+          <div className="max-w-7xl mx-auto p-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-[0_0_40px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_40px_-15px_rgba(0,0,0,0.3)] p-4 sm:p-8 border border-gray-200/50 dark:border-zinc-800/50 backdrop-blur-sm">
+              <div className="flex flex-col lg:flex-row gap-6 lg:gap-12">
+                {/* Left side - Fixed width image column */}
+                <div className="w-full lg:w-[320px] lg:shrink-0">
+                  <div className="lg:sticky lg:top-8">
+                    <div className="relative aspect-square max-w-[280px] mx-auto">
+                      <img
+                        src={badge}
+                        alt="Police Badge"
+                        className="w-full h-full object-contain"
+                      />
                     </div>
-                  )}
+                    <h2 className="mt-6 text-xl font-serif font-semibold text-gray-900 dark:text-white text-center">
+                      {t.title}
+                    </h2>
+                  </div>
+                </div>
 
-                  {firData && <FIRViewer firData={firData} t={t} />}
+                {/* Right side - Form and PDF viewer */}
+                <div className="flex-1 min-w-0">
+                  <div className="max-w-xl mx-auto lg:mx-0">
+                    <div className="space-y-6">
+                      <div className="relative group">
+                        <input
+                          type="text"
+                          value={firId}
+                          onChange={(e) => setFirId(e.target.value)}
+                          placeholder={t.placeholder}
+                          className="w-full px-4 py-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-white dark:bg-zinc-900/50 focus:ring-2 focus:ring-gov-green-500 focus:border-transparent outline-none transition-all dark:text-white dark:placeholder-gray-400"
+                        />
+                        <div className="absolute inset-0 rounded-xl bg-gov-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                      </div>
+                      <button
+                        onClick={fetchFIR}
+                        disabled={loading}
+                        className="w-full bg-gov-green-500 hover:bg-gov-green-600 text-white px-6 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-gov-green-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 group shadow-lg dark:shadow-gov-green-900/20"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            <span>{t.fetching}</span>
+                          </>
+                        ) : (
+                          <>
+                            <BookOpenCheck className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                            <span>{t.fetch}</span>
+                          </>
+                        )}
+                      </button>
+
+                      {error && (
+                        <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-200 p-4 rounded-xl text-sm animate-fade-in">
+                          {error}
+                        </div>
+                      )}
+
+                      {firData && <FIRViewer firData={firData} t={t} />}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -135,9 +176,13 @@ function App() {
 
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className={`fixed left-4 bottom-4 p-2 bg-white dark:bg-gray-800/95 rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700/90 transition-colors z-30 ${isMobileMenuOpen ? 'opacity-0 pointer-events-none' : ''}`}
+          className={`fixed left-4 bottom-4 p-2 bg-white dark:bg-zinc-900 rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.3)] hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all duration-200 z-50 border border-gray-200/50 dark:border-zinc-800/50 backdrop-blur-sm hover:scale-105`}
         >
-          <Menu className="h-6 w-6 text-gov-green-600 dark:text-gov-green-300" />
+          {isSidebarOpen ? (
+            <X className="h-6 w-6 text-gov-green-600 dark:text-gov-green-300" />
+          ) : (
+            <Menu className="h-6 w-6 text-gov-green-600 dark:text-gov-green-300" />
+          )}
         </button>
       </div>
 
@@ -145,9 +190,13 @@ function App() {
         showChatbot={showChatbot}
         setShowChatbot={setShowChatbot}
         t={t}
+        language={language}
+        setLanguage={setLanguage}
       />
     </div>
   );
 }
 
 export default App;
+
+//import badge from  "../src/assets//profile.png";

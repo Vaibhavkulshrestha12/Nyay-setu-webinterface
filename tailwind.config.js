@@ -9,16 +9,16 @@ export default {
       },
       colors: {
         'gov-green': {
-          50: '#f2f8f4',
-          100: '#e6f1e8',
-          200: '#bfd9c4',
-          300: '#99c2a1',
-          400: '#4d8f5c',  // More refined government green
-          500: '#2c7a3d',  // Primary green
-          600: '#236831',  // Darker shade
-          700: '#1a5525',
-          800: '#11421a',
-          900: '#082f0e',
+          50: '#e6f7ef',
+          100: '#ccefdf',
+          200: '#99dfbf',
+          300: '#66cf9f',
+          400: '#33bf7f',
+          500: '#20C073',  // New primary green
+          600: '#1aa65f',  // Darker shade for hover
+          700: '#158c4f',
+          800: '#10733f',
+          900: '#0c592f',
         }
       },
       fontFamily: {

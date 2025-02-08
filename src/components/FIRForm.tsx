@@ -32,7 +32,7 @@ export const FIRForm: React.FC<FIRFormProps> = ({
       <button
         onClick={onSubmit}
         disabled={loading}
-        className="mt-4 w-full bg-gradient-to-r from-gov-green-600 to-gov-green-500 hover:from-gov-green-700 hover:to-gov-green-600 text-white px-6 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-gov-green-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 group shadow-lg dark:shadow-gov-green-900/20"
+        className="mt-4 w-full bg-gov-green-500 hover:bg-gov-green-600 text-white px-6 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-gov-green-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 group shadow-lg dark:shadow-gov-green-900/20"
       >
         {loading ? (
           <>
